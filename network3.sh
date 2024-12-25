@@ -89,40 +89,6 @@ ListenPort = 1435" > wg0.conf
     
     # Даем время на применение изменений
     sleep 5
-  else
-    # Генерируем новый ключ
-    echo "Генерируем новый приватный ключ..."
-    
-    # Создаем директорию wireguard если её нет
-    sudo mkdir -p /usr/local/etc/wireguard
-    
-    # Генерируем новый приватный ключ
-    wg genkey | sudo tee /usr/local/etc/wireguard/utun.key > /dev/null
-    sudo chmod 600 /usr/local/etc/wireguard/utun.key
-    
-    # Получаем сгенерированный ключ
-    private_key=$(sudo cat /usr/local/etc/wireguard/utun.key)
-    
-    # Сохраняем ключ в конфигурацию WireGuard
-    echo "[Interface]
-PrivateKey = $private_key
-ListenPort = 1435" > wg0.conf
-    chmod 600 wg0.conf
-    
-    # Также сохраняем ключ в директорию config для совместимости
-    mkdir -p config
-    echo "$private_key" > config/private_key
-    chmod 600 config/private_key
-    
-    echo "Новый приватный ключ сгенерирован и сохранен!"
-    
-    # Показываем ключ пользов��телю
-    echo -e "\nВаш приватный ключ (сохраните его):"
-    echo "$private_key"
-    
-    # Даем время на сохранение ключа
-    echo -e "\nУ вас есть 30 секунд чтобы скопировать ключ..."
-    sleep 30
   fi
   
   # Изменяем порты в конфигурации
@@ -215,7 +181,7 @@ check_points() {
 check_private_key() {
   echo "Проверяем приватный ключ..."
   
-  # Проверяем все возможные места хранения ��люча
+  # Проверяем все возможные места хранения ключа
   key_locations=(
     "/usr/local/etc/wireguard/utun.key"
     "$HOME/ubuntu-node/config/private_key"
@@ -376,7 +342,7 @@ check_network() {
   echo -e "\n2. Проверка WireGuard:"
   sudo wg show || echo "WireGuard не запущен"
   
-  echo -e "\n3. Проверка сетевых интерфейсов:"
+  echo -e "\n3. Проверка сетевых инт��рфейсов:"
   ip a | grep -E "wg0|inet"
   
   echo -e "\n4. Проверка маршрутизации:"
